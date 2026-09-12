@@ -791,12 +791,13 @@ export default function Home() {
       </section>
       <footer className="shell footer">
         <div className="footer-sponsors"><img src="/sponsors-transparent.png" alt="Our sponsors" loading="lazy"/></div>
-        <b>{data.title}</b>
+        <div className="footer-title"><b>{data.title}</b>
+      {!cloud.session && <div className="footer-login footer-login-inline"><CloudAccess canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/></div>}
+        </div>
         <span>
           {date(data.date1)} & {date(data.date2)} · {data.venue}
         </span>
       </footer>
-      {!cloud.session && <div className="footer-login"><CloudAccess canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/></div>}
     </main>
   );
 }

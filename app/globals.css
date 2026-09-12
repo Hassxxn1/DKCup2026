@@ -70,3 +70,4 @@
 @media print{.footer-login{display:none}}
 .footer{flex-wrap:wrap;gap:16px}.footer-sponsors{flex:0 0 100%;width:100%;min-width:0;padding-bottom:16px}.footer-sponsors img{display:block;width:100%;height:auto}
 @media print{.footer-sponsors{display:none}}
+.footer-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.footer-login-inline{padding:0}.footer-login-inline .cloud-access{width:auto;margin:0;padding:0}.footer-login-inline .cloud-actions>button{min-height:32px;padding:4px 8px}.footer-login-inline .cloud-login{width:100%;margin-top:10px;text-transform:none;letter-spacing:normal}.footer-login-inline:has(.cloud-login){flex-basis:100%}
