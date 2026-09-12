@@ -27,3 +27,14 @@
 /* Shared table geometry prevents team names from shifting the statistics. */
 .stand table{table-layout:fixed}.stand th:first-child,.stand td:first-child{width:40%;overflow-wrap:anywhere}.stand th:not(:first-child),.stand td:not(:first-child){width:7.5%}.fixture-pair{display:contents}
 @media print{.fixtures{display:block;background:transparent;border:0}.fixture-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;break-inside:avoid;page-break-inside:avoid;border:1px solid #bbb;margin:0 0 1px}.fixture{min-width:0;border:0;min-height:82px;height:auto}.fixture+.fixture{border-left:1px solid #bbb}.day{break-inside:auto}.day h3,.schedule-break{break-after:avoid;page-break-after:avoid}.stand{overflow:visible;break-inside:auto}.stand table{min-width:0;width:100%;table-layout:fixed}.stand th,.stand td{padding:8px 5px;font-size:10px}.stand th:first-child,.stand td:first-child{width:40%}.stand th:not(:first-child),.stand td:not(:first-child){width:7.5%}.stand tr{break-inside:avoid;page-break-inside:avoid}.stand thead{display:table-header-group}.stand h3{break-after:avoid}.stand td:first-child b{width:20px;height:20px;margin-right:6px}.fixture-team span{overflow-wrap:anywhere}}
+
+.cloud-access { padding-top: 12px; padding-bottom: 12px; font-size: 13px; }
+.cloud-actions,.cloud-login { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.cloud-access button { border:1px solid #444; border-radius:6px; padding:9px 13px; cursor:pointer; background:#171b1e; color:white; }
+.cloud-access button:disabled { opacity:.5; cursor:default; }
+.cloud-actions button:first-child { border-color:#00adef; }
+.cloud-access p { margin-top:10px; color:#f8aa45; }
+.cloud-login { margin-top:16px; }
+.cloud-login label { display:flex; flex-direction:column; gap:4px; }
+.cloud-login input { border:1px solid #555; background:#171b1e; color:white; border-radius:4px; padding:8px; }
+@media print { .cloud-access { display:none !important; } }

@@ -1,6 +1,8 @@
 'use client';
 import { ADK_LOGO, ADK_WHITE_LOGO } from '@/lib/brand';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTournamentCloud } from '@/lib/use-tournament-cloud';
+import CloudAccess from '@/components/cloud-access';
 import {
   CalendarDays,
   Clipboard,
@@ -277,39 +279,19 @@ function normalize(value: unknown): Data {
   return { ...d, confirmed, matches, allocationVersion: 2, registration, applied };
 }
 export default function Home() {
-  const [data, setData] = useState<Data>(fresh),
-    [tab, setTab] = useState('draw'),
-    [saved, setSaved] = useState(false),
-    [ready, setReady] = useState(false),
-    [saveError, setSaveError] = useState(''),
-    file = useRef<HTMLInputElement>(null);
-  useEffect(() => {
+  const cloud = useTournamentCloud(fresh, normalize);
+  const {data, setData, ready, canEdit, error: saveError} = cloud;
+  const [tab, setTab] = useState('schedule');
+  const file = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (!canEdit) setTab(t => ['teams','draw','setup'].includes(t) ? 'schedule' : t); }, [canEdit]);
+  const recover = (key: string) => {
     try {
-      const x = localStorage.getItem(KEY);
-      if (x) setData(normalize(JSON.parse(x)));
-      setReady(true);
-    } catch {
-      setSaveError(
-        'Saved data could not be loaded. Export a backup before importing a valid tournament file.',
-      );
-    }
-  }, []);
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      const serialized = JSON.stringify(data);
-      localStorage.setItem(KEY, serialized);
-      if (localStorage.getItem(KEY) !== serialized) throw new Error('Save verification failed');
-      setSaveError('');
-      setSaved(true);
-
-    } catch {
-      setSaved(false);
-      setSaveError(
-        'Changes could not be saved on this device. Export your data now to keep a backup.',
-      );
-    }
-  }, [data, ready]);
+      const raw = localStorage.getItem(key);
+      if (!raw) { alert('No saved tournament was found on this browser. You can import an exported JSON backup in Setup & share.'); return; }
+      const imported = normalize(JSON.parse(raw));
+      if (confirm('Load this saved tournament as your draft? Review it, then select Save & publish to share it.')) setData(imported);
+    } catch { alert('This saved file could not be loaded. Use a valid JSON backup.'); }
+  };
   const editTeam = (
     division: Division,
     id: string,
@@ -465,7 +447,7 @@ export default function Home() {
         const imported = normalize(JSON.parse(String(r.result)));
         if (confirm('Replace this tournament with the imported data?')) {
           setData(imported);
-          setReady(true);
+
         }
       } catch {
         alert(
@@ -502,9 +484,10 @@ export default function Home() {
         </div>
         <div className="meta">
           17 & 18 SEPTEMBER · {data.venue.toUpperCase()}
-          <small>{saved ? 'SAVED ON THIS DEVICE' : 'NOT SAVED YET'}</small>
+          <small>{cloud.dirty ? 'UNPUBLISHED CHANGES' : saveError ? 'CONNECTION ERROR' : !ready ? 'CONNECTING…' : cloud.updated ? 'PUBLISHED · UPDATES EVERY 10 SECONDS' : 'AWAITING FIRST PUBLISH'}</small>
         </div>
       </header>
+      <CloudAccess email={cloud.session?.user.email} canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/>
       <nav className="shell nav">
         {[
           ['teams', 'Teams'],
@@ -513,7 +496,7 @@ export default function Home() {
           ['standings', 'Standings'],
           ['bracket', 'Finals'],
           ['setup', 'Setup & share'],
-        ].map((x) => (
+        ].filter(x => canEdit || !['teams','draw','setup'].includes(x[0])).map((x) => (
           <button
             className={tab === x[0] ? 'active' : ''}
             onClick={() => setTab(x[0])}
@@ -529,7 +512,7 @@ export default function Home() {
             {saveError}
           </p>
         )}
-        {(tab === 'draw' || tab === 'teams') && (
+        {canEdit && (tab === 'draw' || tab === 'teams') && (
           <>
             <Head
               k="8 MEN’S TEAMS · 4 WOMEN’S TEAMS"
@@ -570,7 +553,7 @@ export default function Home() {
             <Head
               k={`TWO GROUNDS · ${visibleMatches.length} MATCHES`}
               t="Match schedule"
-              c="Enter scores directly beside each fixture."
+              c={canEdit ? "Enter scores, then Save & publish to update the public view." : "Live scores and standings · Refreshes every 10 seconds"}
               a={
                 <Button
                   variant="outline"
@@ -583,8 +566,8 @@ export default function Home() {
                 </Button>
               }
             />
-            <div className="schedule-actions"><Button className="dark" disabled={!visibleMatches.length} onClick={csvDownload}><Download/>Export CSV for Excel</Button><Button className="dark" disabled={!ready} onClick={clearDraw}>Clear draw & schedule</Button></div>
-            {!visibleMatches.length && <p className="draw-error">No confirmed draw yet. Add your teams, take the draw, then confirm it on the Draw page. Your schedule will appear here.</p>}
+            <div className="schedule-actions"><Button className="dark" disabled={!visibleMatches.length} onClick={csvDownload}><Download/>Export CSV for Excel</Button>{canEdit && <Button className="dark" disabled={!ready || cloud.saving} onClick={clearDraw}>Clear draw & schedule</Button>}</div>
+            {!visibleMatches.length && <p className="draw-error">{ready ? (canEdit ? 'No confirmed draw yet. Confirm your draw, then Save & publish.' : 'The schedule will appear after the organizers publish the draw.') : 'Loading tournament…'}</p>}
             {visibleMatches.length>0 && <ScheduleExport data={{...data,matches:visibleMatches}}/>}
             <p className="schedule-note">
               Men: 2 × 20 minutes · Women: 2 × 15 minutes. Allow 5 minutes for
@@ -628,6 +611,8 @@ export default function Home() {
                         />
                         <input
                           className="score"
+                          readOnly={!canEdit || cloud.saving}
+                          aria-label="Team score"
                           value={m.hs}
                           inputMode="numeric"
                           onChange={(e) => score(m.id, 'hs', e.target.value)}
@@ -638,6 +623,8 @@ export default function Home() {
                         </i>
                         <input
                           className="score"
+                          readOnly={!canEdit || cloud.saving}
+                          aria-label="Team score"
                           value={m.as}
                           inputMode="numeric"
                           onChange={(e) => score(m.id, 'as', e.target.value)}
@@ -718,13 +705,13 @@ export default function Home() {
             </div>
           </>
         )}
-        {tab === 'setup' && (
+        {canEdit && tab === 'setup' && (
           <>
-            <p>Data saves in this browser on this device. Clearing browser data removes it. Use Export data for a backup including teams, logos, draws and scores; CSV is for sharing the schedule.</p>
+            <p>Select Save & publish to save changes to the shared database. Export data keeps a backup of teams, logos, draws and scores; CSV shares the schedule with organizers.</p>
             <Head
-              k="LOCAL TO THIS DEVICE"
+              k="SHARED TOURNAMENT"
               t="Setup & share"
-              c="Changes save automatically in this browser."
+              c="Drafts stay on this device until you select Save & publish."
             />
             <div className="settings">
               <div className="panel">
@@ -734,7 +721,7 @@ export default function Home() {
                   ['Venue', 'venue', 'text'],
                   ['Day one', 'date1', 'date'],
                   ['Day two', 'date2', 'date'],
-                ].map((x) => (
+                ].filter(x => canEdit || !['teams','draw','setup'].includes(x[0])).map((x) => (
                   <label key={x[1]}>
                     {x[0]}
                     <Input
@@ -789,7 +776,7 @@ export default function Home() {
                   variant="ghost"
                   onClick={() =>
                     confirm('Reset all teams, logos, draws and scores?') &&
-                    (setData(fresh()), setReady(true))
+                    setData(fresh())
                   }
                 >
                   <RotateCcw />
