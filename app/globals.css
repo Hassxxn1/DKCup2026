@@ -38,3 +38,30 @@
 .cloud-login label { display:flex; flex-direction:column; gap:4px; }
 .cloud-login input { border:1px solid #555; background:#171b1e; color:white; border-radius:4px; padding:8px; }
 @media print { .cloud-access { display:none !important; } }
+
+/* Keep each table's horizontal scrolling inside its own panel. */
+.stand{overflow:visible}.stand-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}.stand-scroll-hint{display:none}
+@media screen and (max-width:600px){
+  .shell{width:calc(100% - 24px)}
+  .header{flex-direction:column;align-items:flex-start;gap:12px;padding:18px 0 10px}
+  .meta{display:block;text-align:left;line-height:1.5;letter-spacing:.07em}.meta small{color:#aaa}
+  .content{padding:26px 0 40px}.head{gap:16px;padding-bottom:20px;margin-bottom:20px}.head h1{font-size:clamp(36px,10vw,52px);overflow-wrap:anywhere}
+  .nav{gap:20px}.nav button{min-height:48px;padding:12px 4px;font-size:12px}
+  .cloud-actions{gap:8px}.cloud-actions>span{width:100%;overflow-wrap:anywhere}
+  .cloud-access button,.schedule-actions button,.head>button{min-height:44px;height:auto;white-space:normal}
+  .cloud-login{display:grid;grid-template-columns:minmax(0,1fr);width:100%}.cloud-login label,.cloud-login input{min-width:0;width:100%}
+  .cloud-login input,.panel input,.team-fields input,.registration-row select{font-size:16px;min-height:44px}
+  .schedule-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+  .fixture{grid-template-columns:minmax(0,1fr) 36px 14px 36px minmax(0,1fr);gap:6px;padding:12px;font-size:13px;min-width:0}
+  .fixture .when{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;border-right:0;border-bottom:1px solid #303034;padding-bottom:9px;margin-bottom:5px}
+  .fixture .when span,.fixture .when small{display:block;font-size:10px;margin:0;letter-spacing:0}
+  .fixture-team,.fixture-team.home{flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0;gap:7px}
+  .fixture-team .team-logo{width:32px;height:32px}.score{width:36px;height:44px;font-size:16px}
+  .day h3{font-size:20px;padding:12px}.final{padding:16px;min-width:0}.final header{flex-wrap:wrap;gap:8px}.final p{padding:16px 10px;overflow-wrap:anywhere;font-size:14px}
+  .stand-scroll-hint{display:block;color:#aaa;font-size:12px;margin:10px 0}.stand table{min-width:600px}
+  .stand th:first-child,.stand td:first-child{position:sticky;left:0;z-index:1;background:#111315;width:180px;box-shadow:1px 0 #343438}
+  .stand th:not(:first-child),.stand td:not(:first-child){width:52.5px}.stand th,.stand td{padding:12px 8px;font-size:12px}
+  .stand td:first-child b{width:22px;height:22px;margin-right:6px}
+  .png-previews{grid-template-columns:minmax(0,1fr)}.png-panel,.panel{padding:16px}.footer{line-height:1.6}
+}
+@media print{.stand-scroll{overflow:visible}.stand-scroll-hint{display:none}}

@@ -823,6 +823,8 @@ function Stand({ title, rows }: { title: string; rows: any[] }) {
   return (
     <div className="stand">
       <h3>{title}</h3>
+      <p className="stand-scroll-hint">Swipe sideways to see all statistics →</p>
+      <div className="stand-scroll" role="region" aria-label={title + " standings"} tabIndex={0}>
       <table>
         <thead>
           <tr>
@@ -848,6 +850,7 @@ function Stand({ title, rows }: { title: string; rows: any[] }) {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
