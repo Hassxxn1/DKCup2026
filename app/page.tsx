@@ -3,6 +3,7 @@ import { ADK_LOGO, ADK_WHITE_LOGO } from '@/lib/brand';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTournamentCloud } from '@/lib/use-tournament-cloud';
 import CloudAccess from '@/components/cloud-access';
+import { qualifiedTeam } from '@/lib/qualification';
 import {
   CalendarDays,
   Clipboard,
@@ -554,7 +555,7 @@ export default function Home() {
               k={`TWO GROUNDS · ${visibleMatches.length} MATCHES`}
               t="Match schedule"
               c={canEdit ? "Enter scores, then Save & publish to update the public view." : "Live scores and standings · Refreshes every 10 seconds"}
-              a={
+              a={canEdit &&
                 <Button
                   variant="outline"
                   className="dark"
@@ -566,9 +567,9 @@ export default function Home() {
                 </Button>
               }
             />
-            <div className="schedule-actions"><Button className="dark" disabled={!visibleMatches.length} onClick={csvDownload}><Download/>Export CSV for Excel</Button>{canEdit && <Button className="dark" disabled={!ready || cloud.saving} onClick={clearDraw}>Clear draw & schedule</Button>}</div>
+            {canEdit && <div className="schedule-actions"><Button className="dark" disabled={!visibleMatches.length} onClick={csvDownload}><Download/>Export CSV for Excel</Button>{canEdit && <Button className="dark" disabled={!ready || cloud.saving} onClick={clearDraw}>Clear draw & schedule</Button>}</div>}
             {!visibleMatches.length && <p className="draw-error">{ready ? (canEdit ? 'No confirmed draw yet. Confirm your draw, then Save & publish.' : 'The schedule will appear after the organizers publish the draw.') : 'Loading tournament…'}</p>}
-            {visibleMatches.length>0 && <ScheduleExport data={{...data,matches:visibleMatches}}/>}
+            {canEdit && visibleMatches.length>0 && <ScheduleExport data={{...data,matches:visibleMatches}}/>}
             <p className="schedule-note">
               Men: 2 × 20 minutes · Women: 2 × 15 minutes. Allow 5 minutes for
               half-time.
@@ -609,26 +610,26 @@ export default function Home() {
                           }
                           home
                         />
-                        <input
+                        {canEdit ? <input
                           className="score"
                           readOnly={!canEdit || cloud.saving}
                           aria-label="Team score"
                           value={m.hs}
                           inputMode="numeric"
                           onChange={(e) => score(m.id, 'hs', e.target.value)}
-                        />
+                        /> : <span className="score public-score">{m.hs || "–"}</span>}
                         <i className="fixture-versus">
                           <span className="screen-dash">—</span>
                           <span className="print-vs">vs</span>
                         </i>
-                        <input
+                        {canEdit ? <input
                           className="score"
                           readOnly={!canEdit || cloud.saving}
                           aria-label="Team score"
                           value={m.as}
                           inputMode="numeric"
                           onChange={(e) => score(m.id, 'as', e.target.value)}
-                        />
+                        /> : <span className="score public-score">{m.as || "–"}</span>}
                         <FixtureTeam
                           name={m.away}
                           entries={
@@ -673,19 +674,19 @@ export default function Home() {
             <Head
               k="FINALS NIGHT · 18 SEPTEMBER"
               t="Road to the cup"
-              c="Qualifiers update from live group standings."
+              c="Teams qualify after all group results are entered and ranking ties are resolved."
             />
             <div className="bracket">
               <Final
                 label="SEMIFINAL 1"
-                a={st.a[0]?.team}
-                b={st.b[1]?.team}
+                a={qualifiedTeam(data.matches, 'Men A', data.confirmed.men, st.a, 0)}
+                b={qualifiedTeam(data.matches, 'Men B', data.confirmed.men, st.b, 1)}
                 time="17:30 · Ground 1"
               />
               <Final
                 label="SEMIFINAL 2"
-                a={st.b[0]?.team}
-                b={st.a[1]?.team}
+                a={qualifiedTeam(data.matches, 'Men B', data.confirmed.men, st.b, 0)}
+                b={qualifiedTeam(data.matches, 'Men A', data.confirmed.men, st.a, 1)}
                 time="17:30 · Ground 2"
               />
               <Final
@@ -697,8 +698,8 @@ export default function Home() {
               />
               <Final
                 label="WOMEN’S FINAL"
-                a={st.w[0]?.team}
-                b={st.w[1]?.team}
+                a={qualifiedTeam(data.matches, 'Women', data.confirmed.women, st.w, 0)}
+                b={qualifiedTeam(data.matches, 'Women', data.confirmed.women, st.w, 1)}
                 time="20:00 · Ground 1"
                 women
               />
@@ -878,9 +879,9 @@ function Final({
         <small>{time}</small>
       </header>
       <p>
-        <span>{a || 'To be decided'}</span>
+        <span>{a || 'To be confirmed'}</span>
         <i>VS</i>
-        <span>{b || 'To be decided'}</span>
+        <span>{b || 'To be confirmed'}</span>
       </p>
     </article>
   );

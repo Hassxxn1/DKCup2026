@@ -65,3 +65,4 @@
   .png-previews{grid-template-columns:minmax(0,1fr)}.png-panel,.panel{padding:16px}.footer{line-height:1.6}
 }
 @media print{.stand-scroll{overflow:visible}.stand-scroll-hint{display:none}}
+.public-score{display:grid;place-items:center;background:transparent;border-color:transparent}
