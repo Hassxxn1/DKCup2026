@@ -14,7 +14,7 @@ export default function CloudAccess({ email, canEdit, dirty, saving, ready, publ
       {email ? <><span>{canEdit ? 'Official' : 'Viewer'}: {email}</span><button disabled={saving} onClick={async () => {
         if (dirty && !confirm('Unpublished changes will be left in a local draft. Sign out?')) return;
         const result = await supabase.auth.signOut(); if (result.error) setError(result.error.message);
-      }}>Sign out</button></> : <button onClick={() => setOpen(!open)}>Official sign in</button>}
+      }}>Sign out</button></> : <button onClick={() => setOpen(!open)}>Login</button>}
     </div>
     {dirty && <p>Changes are saved as a draft on this device. Select Save & publish to update everyone’s view.</p>}
     {email && !canEdit && <p>This account has view-only access. Ask the tournament administrator to authorize it.</p>}
@@ -27,7 +27,7 @@ export default function CloudAccess({ email, canEdit, dirty, saving, ready, publ
       finally {setBusy(false);}
     }}><label>Email<input type="email" autoComplete="username" required value={login} onChange={e=>setLogin(e.target.value)}/></label>
     <label>Password<input type="password" autoComplete="current-password" required value={password} onChange={e=>setPassword(e.target.value)}/></label>
-    <button disabled={busy} type="submit">{busy?'Signing in…':'Sign in'}</button></form>}
+    <button disabled={busy} type="submit">{busy?'Signing in…':'Login'}</button></form>}
     {error && <p role="alert">{error}</p>}
   </div>;
 }

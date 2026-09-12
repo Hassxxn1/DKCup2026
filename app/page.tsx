@@ -485,10 +485,10 @@ export default function Home() {
         </div>
         <div className="meta">
           17 & 18 SEPTEMBER · {data.venue.toUpperCase()}
-          <small>{cloud.dirty ? 'UNPUBLISHED CHANGES' : saveError ? 'CONNECTION ERROR' : !ready ? 'CONNECTING…' : cloud.updated ? 'PUBLISHED · UPDATES EVERY 10 SECONDS' : 'AWAITING FIRST PUBLISH'}</small>
+          {canEdit && <small>{cloud.dirty ? 'UNPUBLISHED CHANGES' : saveError ? 'CONNECTION ERROR' : !ready ? 'CONNECTING…' : cloud.updated ? 'PUBLISHED · UPDATES EVERY 10 SECONDS' : 'AWAITING FIRST PUBLISH'}</small>}
         </div>
       </header>
-      <CloudAccess email={cloud.session?.user.email} canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/>
+      {cloud.session && <CloudAccess email={cloud.session?.user.email} canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/>}
       <nav className="shell nav">
         {[
           ['teams', 'Teams'],
@@ -554,7 +554,7 @@ export default function Home() {
             <Head
               k={`TWO GROUNDS · ${visibleMatches.length} MATCHES`}
               t="Match schedule"
-              c={canEdit ? "Enter scores, then Save & publish to update the public view." : "Live scores and standings · Refreshes every 10 seconds"}
+              c={canEdit ? "Enter scores, then Save & publish to update the public view." : undefined}
               a={canEdit &&
                 <Button
                   variant="outline"
@@ -570,10 +570,10 @@ export default function Home() {
             {canEdit && <div className="schedule-actions"><Button className="dark" disabled={!visibleMatches.length} onClick={csvDownload}><Download/>Export CSV for Excel</Button>{canEdit && <Button className="dark" disabled={!ready || cloud.saving} onClick={clearDraw}>Clear draw & schedule</Button>}</div>}
             {!visibleMatches.length && <p className="draw-error">{ready ? (canEdit ? 'No confirmed draw yet. Confirm your draw, then Save & publish.' : 'The schedule will appear after the organizers publish the draw.') : 'Loading tournament…'}</p>}
             {canEdit && visibleMatches.length>0 && <ScheduleExport data={{...data,matches:visibleMatches}}/>}
-            <p className="schedule-note">
+            {canEdit && <p className="schedule-note">
               Men: 2 × 20 minutes · Women: 2 × 15 minutes. Allow 5 minutes for
               half-time.
-            </p>
+            </p>}
             {[1, 2].filter(day=>visibleMatches.some(m=>m.day===day)).map((day) => (
               <div className="day" key={day}>
                 <h3>
@@ -583,7 +583,7 @@ export default function Home() {
                 <p className="schedule-break">
                   {day === 1
                     ? 'Tournament starts at 20:00 · Both grounds'
-                    : 'Prayer break: 10:00–15:00 · No matches on either ground'}
+                    : canEdit ? 'Prayer break: 10:00–15:00 · No matches on either ground' : 'Prayer break: 10:00–15:00'}
                 </p>
                 <div className="fixtures">
                   {[...new Set(visibleMatches.filter(m=>m.day===day).map(m=>m.time))].map(time => (
@@ -674,7 +674,7 @@ export default function Home() {
             <Head
               k="FINALS NIGHT · 18 SEPTEMBER"
               t="Road to the cup"
-              c="Teams qualify after all group results are entered and ranking ties are resolved."
+              c={canEdit ? "Teams qualify after all group results are entered and ranking ties are resolved." : undefined}
             />
             <div className="bracket">
               <Final
@@ -795,6 +795,7 @@ export default function Home() {
           {date(data.date1)} & {date(data.date2)} · {data.venue}
         </span>
       </footer>
+      {!cloud.session && <div className="footer-login"><CloudAccess canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/></div>}
     </main>
   );
 }

@@ -66,3 +66,5 @@
 }
 @media print{.stand-scroll{overflow:visible}.stand-scroll-hint{display:none}}
 .public-score{display:grid;place-items:center;background:transparent;border-color:transparent}
+.footer-login{padding-bottom:24px}.footer-login .cloud-actions{justify-content:flex-end}.footer-login .cloud-actions>button{background:transparent;border:0;color:#999;font-size:12px;padding:8px;min-height:44px}.footer-login .cloud-login{justify-content:flex-end}.footer-login button:hover{color:#fff}.footer-login button:focus-visible{outline:2px solid var(--brand-blue);outline-offset:2px}
+@media print{.footer-login{display:none}}
