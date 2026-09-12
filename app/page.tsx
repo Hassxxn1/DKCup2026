@@ -790,6 +790,7 @@ export default function Home() {
         {tab === 'schedule' && visibleMatches.length>0 && <div className="print-sponsors"><img src="/sponsors-transparent.png" alt="Our sponsors"/></div>}
       </section>
       <footer className="shell footer">
+        <div className="footer-sponsors"><img src="/sponsors-transparent.png" alt="Our sponsors" loading="lazy"/></div>
         <b>{data.title}</b>
         <span>
           {date(data.date1)} & {date(data.date2)} · {data.venue}
