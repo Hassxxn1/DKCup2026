@@ -673,7 +673,7 @@ export default function Home() {
           <>
             <Head
               k="FINALS NIGHT · 18 SEPTEMBER"
-              t="Semifinals & Finals"
+              t="Finals"
               c={canEdit ? "Teams qualify after all group results are entered and ranking ties are resolved." : undefined}
             />
             <div className="bracket">
