@@ -11,8 +11,8 @@ export default function TeamsPage({registration,rosters,officials,onOfficials,ca
   const [editing,setEditing]=useState(false);
   const [uploading,setUploading]=useState<number|null>(null);
   const [photoError,setPhotoError]=useState('');
-  const latest=useRef({rosters,canEdit,saving,onChange});
-  latest.current={rosters,canEdit,saving,onChange};
+  const latest=useRef({rosters,officials,canEdit,saving,onChange,onOfficials});
+  latest.current={rosters,officials,canEdit,saving,onChange,onOfficials};
   const mounted=useRef(true);
   useEffect(()=>{mounted.current=true;return ()=>{mounted.current=false;};},[]);
   const busy=saving || uploading!==null;
@@ -38,22 +38,40 @@ export default function TeamsPage({registration,rosters,officials,onOfficials,ca
       } catch(error) {if(mounted.current) setPhotoError(error instanceof Error?error.message:'Photo upload failed.');}
       finally {if(mounted.current) setUploading(null);}
     };
+    const uploadOfficial=async(index:number,file:File)=>{
+      const original=staff[index];
+      setUploading(index);setPhotoError('');
+      try {
+        const photo=await loadPlayerPhoto(file);
+        if(!mounted.current) return;
+        const current=latest.current;
+        const list=current.officials[team.id] ?? staff;
+        if(!current.canEdit || current.saving || list[index]!==original) throw new Error('The officials changed while uploading. Please select the photo again.');
+        current.onOfficials(team.id,list.map((o,i)=>i===index?{...o,photo}:o));
+      } catch(error) {if(mounted.current) setPhotoError(error instanceof Error?error.message:'Photo upload failed.');}
+      finally {if(mounted.current) setUploading(null);}
+    };
     return <section className="roster-detail">
       <button className="roster-back" disabled={busy} onClick={()=>{setSelected(null);setEditing(false);}}>← All teams</button>
       <header className="roster-header"><Logo team={team}/><div><p className="kicker">{registration.men.some(t=>t.id===team.id)?'MEN’S TEAM':'WOMEN’S TEAM'}</p><h2 ref={heading} tabIndex={-1}><TeamName name={team.name}/></h2></div>
       {canEdit && <button className="roster-edit" disabled={busy} onClick={()=>setEditing(!editing)}>{editing?'View roster':'Edit roster'}</button>}</header>
+      {photoError && <p role="alert" className="photo-error">{photoError}</p>}
+      {uploading!==null && <p role="status">Preparing photo… Please wait before saving.</p>}
       {(staff.some(o=>o.name.trim()) || canEdit) && <section className="team-officials"><h3>Team officials</h3><div className="officials-grid">
         {staff.map((o,i)=>canEdit && editing ? <div className="roster-editor" key={i}>
           <label>Role<input value={o.role} maxLength={80} disabled={busy} onChange={e=>onOfficials(team.id,staff.map((x,n)=>n===i?{...x,role:e.target.value}:x))}/></label>
           <label>Name<input value={o.name} maxLength={120} disabled={busy} onChange={e=>onOfficials(team.id,staff.map((x,n)=>n===i?{...x,name:e.target.value}:x))}/></label>
+          <div className="player-photo-editor">
+            {o.photo && <img className="player-photo" src={o.photo} alt={o.name || 'Official photo'}/>}
+            <label>{o.photo?'Change photo':'Add photo'}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} aria-label={`Photo for official ${o.name || 'unnamed'}`} onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(file) void uploadOfficial(i,file);}}/><small>JPG, PNG or WebP · up to 10 MB · cropped square</small></label>
+            {o.photo && <button disabled={busy} onClick={()=>onOfficials(team.id,staff.map((x,n)=>n===i?{...x,photo:undefined}:x))}>Remove photo</button>}
+          </div>
           <button disabled={busy} aria-label={`Remove official ${o.name}`} onClick={()=>onOfficials(team.id,staff.filter((_,n)=>n!==i))}>Remove</button>
-        </div> : o.name.trim() && <div className="official-card" key={i}><small>{o.role}</small><strong>{o.name}</strong></div>)}
+        </div> : o.name.trim() && <div className="official-card" key={i}>{o.photo ? <img className="player-photo" src={o.photo} alt={o.name} loading="lazy"/> : <span className="player-photo player-photo-placeholder" aria-hidden="true">{o.name.trim().split(/\s+/).map(n=>n[0]).slice(0,2).join('')}</span>}<div><small>{o.role}</small><strong>{o.name}</strong></div></div>)}
       </div>{canEdit && editing && <button className="roster-edit" disabled={busy || staff.length>=20} onClick={()=>onOfficials(team.id,[...staff,{role:'Official',name:''}])}>Add official</button>}</section>}
       <h3 className="players-heading">Players</h3>
       <p className="roster-count">{players.filter(p=>p.name.trim()).length} players</p>
       {canEdit && editing && <p className="roster-help">Edit player details, then use Save & publish to update the public roster.</p>}
-      {photoError && <p role="alert" className="photo-error">{photoError}</p>}
-      {uploading!==null && <p role="status">Preparing photo… Please wait before saving.</p>}
       <div className="roster-list">
         {players.map((p,i)=>canEdit && editing ? <div className="roster-editor" key={i}>
           <label>Jersey number<input inputMode="numeric" value={p.number} maxLength={3} disabled={busy} onChange={e=>change(i,{number:e.target.value.replace(/\D/g,'')})}/></label>

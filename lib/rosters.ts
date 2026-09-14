@@ -22,7 +22,7 @@ export function readRosters(value:unknown):Rosters {
   return result;
 }
 
-export type TeamOfficial = {role:string;name:string};
+export type TeamOfficial = {role:string;name:string;photo?:string};
 export type Officials = Record<string,TeamOfficial[]>;
 
 export function initialOfficials(name:string):TeamOfficial[] {
@@ -38,7 +38,8 @@ export function readOfficials(value:unknown):Officials {
     if(!/^(men|women)-[1-8]$/.test(id) || !Array.isArray(list) || list.length>20) throw new Error('Invalid team officials.');
     result[id]=list.map(o=>{
       if(!o || typeof o.name!=='string' || o.name.length>120 || typeof o.role!=='string' || o.role.length>80) throw new Error('Invalid official details.');
-      return {name:o.name,role:o.role};
+      if(o.photo!==undefined && (typeof o.photo!=='string' || o.photo.length>24000 || !/^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(o.photo))) throw new Error('Invalid official photo.');
+      return {name:o.name,role:o.role,...(o.photo ? {photo:o.photo} : {})};
     });
   }
   return result;
