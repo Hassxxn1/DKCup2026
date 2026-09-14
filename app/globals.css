@@ -73,3 +73,13 @@
 .footer-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.footer-login-inline{padding:0}.footer-login-inline .cloud-access{width:auto;margin:0;padding:0}.footer-login-inline .cloud-actions>button{min-height:32px;padding:4px 8px}.footer-login-inline .cloud-login{width:100%;margin-top:10px;text-transform:none;letter-spacing:normal}.footer-login-inline:has(.cloud-login){flex-basis:100%}
 .team-name-label{display:inline-block;min-width:0;vertical-align:middle}.team-company{display:block;margin-top:4px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;font-weight:400;letter-spacing:0;text-transform:none;color:#aaa;overflow-wrap:anywhere}.stand .team-name-label{max-width:calc(100% - 42px)}.final .team-company{font-size:11px}
 @media print{.team-company{color:#555;font-size:8px}}
+/* Keep fixture logos anchored beside the scores regardless of team-name length. */
+@media screen and (min-width:601px){
+  .fixture-team{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:8px;padding:0 0 0 4px}
+  .fixture-team.home{grid-template-columns:minmax(0,1fr) 28px;padding:0 4px 0 0;justify-content:normal}
+  .fixture-team.home .team-logo{grid-column:2;grid-row:1}
+  .fixture-team.home .team-name-label{grid-column:1;grid-row:1;text-align:right}
+  .fixture-team .team-logo{width:28px;height:28px;justify-self:center}
+  .fixture-team .team-name-label{width:100%;min-width:0}
+  .fixture-team:not(:has(.team-logo)) .team-name-label{grid-column:1/-1}
+}
