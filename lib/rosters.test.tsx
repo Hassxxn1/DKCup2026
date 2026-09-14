@@ -1,0 +1,19 @@
+import {expect,it} from 'vitest';
+import initial from './initial-rosters.json';
+import {initialRoster,readRosters} from './rosters';
+it('imports all 128 players from 12 teams with unique jersey numbers per team',()=>{
+ expect(Object.keys(initial)).toHaveLength(12);
+ expect(Object.values(initial).flat()).toHaveLength(128);
+ for(const players of Object.values(initial)){expect(new Set(players.map(p=>p.number)).size).toBe(players.length);expect(players.every(p=>p.name && p.company && /^\d+$/.test(p.number))).toBe(true);}
+});
+it('matches existing team spelling and keeps seed data unchanged when editing',()=>{
+ const players=initialRoster('TWC WARRIORS');expect(players).toHaveLength(8);players[0].name='Changed';expect(initialRoster('TWC WORRIORS')[0].name).toBe('NAUSHAD NASEER');
+});
+it('preserves saved overrides, including an intentionally empty roster',()=>{
+ expect(readRosters(undefined)).toEqual({});expect(readRosters({'men-1':[]})).toEqual({'men-1':[]});
+ const r={'women-1':[{name:'Player',company:'ADK Hospital',number:'7'}]};expect(readRosters(r)).toEqual(r);
+});
+it('rejects malformed roster imports',()=>{
+ expect(()=>readRosters({'men-1':[{name:'Player',company:'ADK',number:'abc'}]})).toThrow();
+ expect(()=>readRosters({'unknown':[]})).toThrow();
+});

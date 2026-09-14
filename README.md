@@ -50,3 +50,9 @@ Original local data is preserved under its old browser storage key. On localhost
 Alternatively, export a JSON backup from the original browser and import it through Setup & share on the hosted app. Browser storage is separate for every address and device. **Restore local draft** recovers unpublished changes after a reload. Keep JSON backups; CSV shares fixtures but cannot restore the complete tournament.
 
 Use https://dkcup2026.netlify.app/ for the public staff view and official sign-in. A connection error means the current display may be stale; do not assume a failed publish was saved. The setup SQL is repeatable and does not delete tournament records.
+
+## Team rosters
+
+The public Teams page lists the 12 registered teams and 128 players imported from the supplied team PDFs. Team-level companies come from the existing mapping; each player keeps the company and jersey number listed in the source PDF. Managers/coaches are not included in player rosters.
+
+Officials can select a team, choose Edit roster, edit/add/remove players, then Save & publish. Overrides are stored by stable registration ID in the same protected Supabase tournament state and included in JSON backups. Initial rosters are bundled as defaults for existing tournaments; loading an older state fills only missing roster keys. An explicitly empty roster stays empty. The admin team-name/logo editor is now labeled Registration.

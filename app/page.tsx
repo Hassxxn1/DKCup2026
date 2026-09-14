@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTournamentCloud } from '@/lib/use-tournament-cloud';
 import CloudAccess from '@/components/cloud-access';
 import TeamName from '@/components/team-name';
+import TeamsPage from '@/components/teams-page';
+import { initialRoster, readRosters, type Rosters } from '@/lib/rosters';
 import { teamCompany } from '@/lib/team-company';
 import { qualifiedTeam } from '@/lib/qualification';
 import {
@@ -56,6 +58,7 @@ type Data = {
   organizerLogo?: string;
   allocationVersion?: 2;
   registration: Registration;
+  rosters?: Rosters;
   applied: Applied;
 };
 const KEY = 'cup-2026-local',
@@ -279,7 +282,11 @@ function normalize(value: unknown): Data {
     matches.some(m => (m.division.includes('Women') ? 'women' : 'men') === division && (m.hs !== '' || m.as !== '')) || applied[division].some((id,i)=>id!==registration[division][i].id)
   ])) as Record<Division,boolean>;
   if (divisions.some(division=>typeof confirmed[division] !== 'boolean')) throw new Error('Invalid draw status.');
-  return { ...d, confirmed, matches, allocationVersion: 2, registration, applied };
+  const rosters = readRosters(d.rosters);
+  for (const team of [...registration.men, ...registration.women]) {
+    if (rosters[team.id] === undefined) rosters[team.id] = initialRoster(team.name);
+  }
+  return { ...d, confirmed, matches, allocationVersion: 2, registration, applied, rosters };
 }
 export default function Home() {
   const cloud = useTournamentCloud(fresh, normalize);
@@ -493,7 +500,8 @@ export default function Home() {
       {cloud.session && <CloudAccess email={cloud.session?.user.email} canEdit={canEdit} dirty={cloud.dirty} saving={cloud.saving} ready={ready} publish={cloud.publish} recover={recover}/>}
       <nav className="shell nav">
         {[
-          ['teams', 'Teams'],
+          ['rosters', 'Teams'],
+          ['teams', 'Registration'],
           ['draw', 'Draw'],
           ['schedule', 'Schedule'],
           ['standings', 'Standings'],
@@ -515,6 +523,10 @@ export default function Home() {
             {saveError}
           </p>
         )}
+        {tab === 'rosters' && <>
+          <Head k="DHONKALEYFAANU CUP 2026" t="Teams"/>
+          {ready ? <TeamsPage registration={data.registration} rosters={data.rosters || {}} canEdit={canEdit} saving={cloud.saving} onChange={(id,players)=>setData(d=>({...d,rosters:{...d.rosters,[id]:players}}))}/> : <p>Loading teams…</p>}
+        </>}
         {canEdit && (tab === 'draw' || tab === 'teams') && (
           <>
             <Head
