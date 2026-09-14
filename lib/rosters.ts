@@ -1,6 +1,6 @@
 import officials from './initial-officials.json';
 import initial from './initial-rosters.json';
-export type Player = {name:string;company:string;number:string};
+export type Player = {name:string;company:string;number:string;photo?:string};
 export type Rosters = Record<string,Player[]>;
 export function initialRoster(name:string):Player[] {
   let key=name.toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -15,7 +15,8 @@ export function readRosters(value:unknown):Rosters {
     if(!/^(men|women)-[1-8]$/.test(id) || !Array.isArray(players) || players.length>30) throw new Error('Invalid team roster.');
     result[id]=players.map(p=>{
       if(!p || typeof p.name!=='string' || p.name.length>120 || typeof p.company!=='string' || p.company.length>160 || typeof p.number!=='string' || !/^\d{0,3}$/.test(p.number)) throw new Error('Invalid player details.');
-      return {name:p.name,company:p.company,number:p.number};
+      if(p.photo!==undefined && (typeof p.photo!=='string' || p.photo.length>24000 || !/^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(p.photo))) throw new Error('Invalid player photo.');
+      return {name:p.name,company:p.company,number:p.number,...(p.photo ? {photo:p.photo} : {})};
     });
   }
   return result;

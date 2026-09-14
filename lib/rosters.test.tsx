@@ -28,3 +28,10 @@ it('imports 52 officials and preserves the roles in the source PDFs',()=>{
  expect(readOfficials({'men-1':[]})).toEqual({'men-1':[]});
  expect(()=>readOfficials({'men-1':[{name:123,role:'Coach'}]})).toThrow();
 });
+
+it('preserves photos through JSON save/load and supports removing them',()=>{
+ const player={name:'Player',company:'ADK',number:'7',photo:'data:image/jpeg;base64,/9j/AA=='};
+ expect(readRosters(JSON.parse(JSON.stringify({'men-1':[player]})))['men-1'][0]).toEqual(player);
+ expect(readRosters({'men-1':[{...player,photo:undefined}]})['men-1'][0]).not.toHaveProperty('photo');
+ for(const photo of ['https://example.com/photo.jpg','data:image/svg+xml;base64,AAAA','data:image/jpeg;base64,'+'A'.repeat(24000),123]) expect(()=>readRosters({'men-1':[{...player,photo}]})).toThrow();
+});
