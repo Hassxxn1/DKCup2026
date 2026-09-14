@@ -1,4 +1,6 @@
 'use client';
+import TeamName from '@/components/team-name';
+import { teamCompany } from '@/lib/team-company';
 import { useState } from 'react';
 import { Shuffle, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -187,6 +189,7 @@ export default function DrawPanel({
                           onEdit(d, t.id, { name: e.target.value })
                         }
                       />
+                      {teamCompany(t.name) && <small className="team-company">{teamCompany(t.name)}</small>}
                       <div className="logo-actions">
                         <label className="logo-upload">
                           <Upload size={14} />
@@ -228,7 +231,7 @@ export default function DrawPanel({
                     </div>
                   ) : (
                     <strong className="draw-team-name">
-                      {t.name || 'Unnamed team'}
+                      <TeamName name={t.name || 'Unnamed team'}/>
                     </strong>
                   )}
                 </div>
@@ -315,7 +318,7 @@ export default function DrawPanel({
                             {team ? (
                               <>
                                 <Logo team={team} />
-                                <span>{team.name || 'Unnamed team'}</span>
+                                <TeamName name={team.name || 'Unnamed team'}/>
                               </>
                             ) : (
                               <span className="unassigned">

@@ -71,3 +71,5 @@
 .footer{flex-wrap:wrap;gap:16px}.footer-sponsors{flex:0 0 100%;width:100%;min-width:0;padding-bottom:16px}.footer-sponsors img{display:block;width:100%;height:auto}
 @media print{.footer-sponsors{display:none}}
 .footer-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.footer-login-inline{padding:0}.footer-login-inline .cloud-access{width:auto;margin:0;padding:0}.footer-login-inline .cloud-actions>button{min-height:32px;padding:4px 8px}.footer-login-inline .cloud-login{width:100%;margin-top:10px;text-transform:none;letter-spacing:normal}.footer-login-inline:has(.cloud-login){flex-basis:100%}
+.team-name-label{display:inline-block;min-width:0;vertical-align:middle}.team-company{display:block;margin-top:4px;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;font-weight:400;letter-spacing:0;text-transform:none;color:#aaa;overflow-wrap:anywhere}.stand .team-name-label{max-width:calc(100% - 42px)}.final .team-company{font-size:11px}
+@media print{.team-company{color:#555;font-size:8px}}

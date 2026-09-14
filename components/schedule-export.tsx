@@ -1,4 +1,5 @@
 'use client';
+import { teamCompany } from '@/lib/team-company';
 import { useState } from 'react';
 import { ADK_WHITE_LOGO, BRAND } from '@/lib/brand';
 import { Download, ImageDown } from 'lucide-react';
@@ -154,6 +155,8 @@ export async function renderSchedule(data: Schedule): Promise<Poster[]> {
           '#ffffff',
           home?.logo ? 280 : 334,
         );
+        text(teamCompany(m.home), home?.logo ? 326 : 272, y + 91, 16, '#bdbdc5', home?.logo ? 280 : 334);
+        text(teamCompany(m.away), away?.logo ? 740 : 686, y + 91, 16, '#bdbdc5', away?.logo ? 274 : 328);
         text('VS', 649, y + 65, 15, '#909099', 40, 'center');
         text(
           m.away,

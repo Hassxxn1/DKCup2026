@@ -3,6 +3,8 @@ import { ADK_LOGO, ADK_WHITE_LOGO } from '@/lib/brand';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTournamentCloud } from '@/lib/use-tournament-cloud';
 import CloudAccess from '@/components/cloud-access';
+import TeamName from '@/components/team-name';
+import { teamCompany } from '@/lib/team-company';
 import { qualifiedTeam } from '@/lib/qualification';
 import {
   CalendarDays,
@@ -338,7 +340,7 @@ export default function Home() {
   };
   const csvDownload = () => {
     const cell = (value:unknown) => {let v=String(value);if(/^[\s]*[=+@-]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};
-    const rows = [['Tournament','Date','Time','Ground','Division','Stage','Home team','Away team','Venue'],...visibleMatches.map(m=>[data.title,m.day===1?data.date1:data.date2,m.time,m.ground,m.division,m.stage,m.home,m.away,data.venue])];
+    const rows = [['Tournament','Date','Time','Ground','Division','Stage','Home team','Home company','Away team','Away company','Venue'],...visibleMatches.map(m=>[data.title,m.day===1?data.date1:data.date2,m.time,m.ground,m.division,m.stage,m.home,teamCompany(m.home),m.away,teamCompany(m.away),data.venue])];
     const url=URL.createObjectURL(new Blob(['\ufeff'+rows.map(row=>row.map(cell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));
     const a=document.createElement('a');a.href=url;a.download='tournament-schedule.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
@@ -843,7 +845,7 @@ function Stand({ title, rows }: { title: string; rows: any[] }) {
             <tr key={r.team}>
               <td>
                 <b>{i + 1}</b>
-                {r.team}
+                <TeamName name={r.team}/>
               </td>
               {['p', 'w', 'd', 'l', 'gf', 'ga', 'gd', 'pts'].map((x) => (
                 <td className={x === 'pts' ? 'pts' : ''} key={x}>
@@ -882,9 +884,9 @@ function Final({
         <small>{time}</small>
       </header>
       <p>
-        <span>{a || 'To be confirmed'}</span>
+        <TeamName name={a || 'To be confirmed'}/>
         <i>VS</i>
-        <span>{b || 'To be confirmed'}</span>
+        <TeamName name={b || 'To be confirmed'}/>
       </p>
     </article>
   );
@@ -903,7 +905,7 @@ function FixtureTeam({
   return (
     <div className={`fixture-team ${home ? 'home' : 'away'}`}>
       {team && <Logo team={team} />}
-      <span>{name}</span>
+      <TeamName name={name}/>
     </div>
   );
 }
