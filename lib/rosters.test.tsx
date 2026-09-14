@@ -17,3 +17,14 @@ it('rejects malformed roster imports',()=>{
  expect(()=>readRosters({'men-1':[{name:'Player',company:'ADK',number:'abc'}]})).toThrow();
  expect(()=>readRosters({'unknown':[]})).toThrow();
 });
+
+import {initialOfficials,readOfficials} from './rosters';
+import officials from './initial-officials.json';
+it('imports 52 officials and preserves the roles in the source PDFs',()=>{
+ expect(Object.values(officials).flat()).toHaveLength(52);
+ expect(initialOfficials('Pharma FC')).toContainEqual({role:'Assistant Coach',name:'Santhosh'});
+ expect(initialOfficials('Pharma FC')).toContainEqual({role:'Team Medical',name:'Rikaz'});
+ expect(initialOfficials('GT Lions')).toEqual([{role:'Manager',name:'Nishan Cooray'}]);
+ expect(readOfficials({'men-1':[]})).toEqual({'men-1':[]});
+ expect(()=>readOfficials({'men-1':[{name:123,role:'Coach'}]})).toThrow();
+});

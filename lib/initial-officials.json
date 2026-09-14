@@ -1,0 +1,234 @@
+{
+  "ataxia": [
+    {
+      "role": "Manager",
+      "name": "AISHATH ZEENA"
+    },
+    {
+      "role": "Coach",
+      "name": "ASEEL WAHEED"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "MOHAMED MIMRAH"
+    },
+    {
+      "role": "Team Medical",
+      "name": "ANIL RIMAL"
+    },
+    {
+      "role": "Official 1",
+      "name": "AMINATH MOHAMED"
+    },
+    {
+      "role": "Official 2",
+      "name": "NASIMA ABDULLA"
+    }
+  ],
+  "bondhuteam": [
+    {
+      "role": "Manager",
+      "name": "Mohammad"
+    },
+    {
+      "role": "Coach",
+      "name": "Ibrahim"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "Parbez"
+    },
+    {
+      "role": "Official 1",
+      "name": "Abdullah"
+    }
+  ],
+  "fisaari": [
+    {
+      "role": "Manager",
+      "name": "SAMA ABBAS"
+    },
+    {
+      "role": "Coach",
+      "name": "Hassan Samil"
+    },
+    {
+      "role": "Team Medical",
+      "name": "Aishath Wadhuha Nazeef"
+    },
+    {
+      "role": "Official 1",
+      "name": "Mariyam Reema Abdhulla"
+    },
+    {
+      "role": "Official 2",
+      "name": "Rupa Sharma"
+    }
+  ],
+  "gtlions": [
+    {
+      "role": "Manager",
+      "name": "Nishan Cooray"
+    }
+  ],
+  "gtunited": [
+    {
+      "role": "Manager",
+      "name": "Nishan Cooray"
+    }
+  ],
+  "kanmathisportsclub": [
+    {
+      "role": "Manager",
+      "name": "Ashraf Amir"
+    },
+    {
+      "role": "Coach",
+      "name": "Ismail Mohamed"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "Adam Khaleel Yoosuf"
+    },
+    {
+      "role": "Official 1",
+      "name": "Ubaidhulla Hamood Rasheed"
+    },
+    {
+      "role": "Official 2",
+      "name": "Hussain Mahaaseen"
+    }
+  ],
+  "oaga": [
+    {
+      "role": "Manager",
+      "name": "Mohamed Shamhan"
+    },
+    {
+      "role": "Coach",
+      "name": "Mukhthar Najeeb"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "Hussain Hudhaib"
+    },
+    {
+      "role": "Team Medical",
+      "name": "MD Sajib Hossain"
+    },
+    {
+      "role": "Official 1",
+      "name": "Ahmed Saeid"
+    },
+    {
+      "role": "Official 2",
+      "name": "Hussain Rafeeu"
+    }
+  ],
+  "pharmafc": [
+    {
+      "role": "Manager",
+      "name": "Prasad"
+    },
+    {
+      "role": "Coach",
+      "name": "Nasir"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "Santhosh"
+    },
+    {
+      "role": "Team Medical",
+      "name": "Rikaz"
+    },
+    {
+      "role": "Official 1",
+      "name": "Niranjan"
+    }
+  ],
+  "radhun": [
+    {
+      "role": "Manager",
+      "name": "Mohamed Shamhan Adam"
+    },
+    {
+      "role": "Coach",
+      "name": "Mukhthar Najeeb"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "Hussain Hudhaib"
+    },
+    {
+      "role": "Team Medical",
+      "name": "MD Sajib Hossain"
+    },
+    {
+      "role": "Official 1",
+      "name": "MD Zehadul Islam"
+    },
+    {
+      "role": "Official 2",
+      "name": "Mohamed Auzam"
+    }
+  ],
+  "teamcrd": [
+    {
+      "role": "Manager",
+      "name": "Fathimath Umraa"
+    },
+    {
+      "role": "Coach",
+      "name": "khadheeja Ibrahim"
+    },
+    {
+      "role": "Assistant Coach",
+      "name": "Mariyam Naufa"
+    },
+    {
+      "role": "Team Medical",
+      "name": "Sofoora"
+    },
+    {
+      "role": "Official 1",
+      "name": "Aishath Shaiga"
+    }
+  ],
+  "twcstrikers": [
+    {
+      "role": "Manager",
+      "name": "AHMED SADDHAM AFEEF"
+    },
+    {
+      "role": "Coach",
+      "name": "NAUSHAD NASEER"
+    },
+    {
+      "role": "Team Medical",
+      "name": "NAZARA HASSAN MANIK"
+    },
+    {
+      "role": "Official 1",
+      "name": "AIMINATH NASEER"
+    }
+  ],
+  "twcworriors": [
+    {
+      "role": "Manager",
+      "name": "Ahmed Saddham Afeef"
+    },
+    {
+      "role": "Coach",
+      "name": "SAJIDHA AHMED"
+    },
+    {
+      "role": "Team Medical",
+      "name": "NAZARA HASSAN MANIK"
+    },
+    {
+      "role": "Official 1",
+      "name": "FATHIMATH MUNA HUSSAIN"
+    }
+  ]
+}

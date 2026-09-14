@@ -5,7 +5,7 @@ import { useTournamentCloud } from '@/lib/use-tournament-cloud';
 import CloudAccess from '@/components/cloud-access';
 import TeamName from '@/components/team-name';
 import TeamsPage from '@/components/teams-page';
-import { initialRoster, readRosters, type Rosters } from '@/lib/rosters';
+import { initialRoster, readRosters, initialOfficials, readOfficials, type Officials, type Rosters } from '@/lib/rosters';
 import { teamCompany } from '@/lib/team-company';
 import { qualifiedTeam } from '@/lib/qualification';
 import {
@@ -59,6 +59,7 @@ type Data = {
   allocationVersion?: 2;
   registration: Registration;
   rosters?: Rosters;
+  officials?: Officials;
   applied: Applied;
 };
 const KEY = 'cup-2026-local',
@@ -283,10 +284,12 @@ function normalize(value: unknown): Data {
   ])) as Record<Division,boolean>;
   if (divisions.some(division=>typeof confirmed[division] !== 'boolean')) throw new Error('Invalid draw status.');
   const rosters = readRosters(d.rosters);
+  const officials = readOfficials(d.officials);
   for (const team of [...registration.men, ...registration.women]) {
+    if (officials[team.id] === undefined) officials[team.id] = initialOfficials(team.name);
     if (rosters[team.id] === undefined) rosters[team.id] = initialRoster(team.name);
   }
-  return { ...d, confirmed, matches, allocationVersion: 2, registration, applied, rosters };
+  return { ...d, confirmed, matches, allocationVersion: 2, registration, applied, rosters, officials };
 }
 export default function Home() {
   const cloud = useTournamentCloud(fresh, normalize);
@@ -525,7 +528,7 @@ export default function Home() {
         )}
         {tab === 'rosters' && <>
           <Head k="DHONKALEYFAANU CUP 2026" t="Teams"/>
-          {ready ? <TeamsPage registration={data.registration} rosters={data.rosters || {}} canEdit={canEdit} saving={cloud.saving} onChange={(id,players)=>setData(d=>({...d,rosters:{...d.rosters,[id]:players}}))}/> : <p>Loading teams…</p>}
+          {ready ? <TeamsPage registration={data.registration} rosters={data.rosters || {}} officials={data.officials || {}} onOfficials={(id,list)=>setData(d=>({...d,officials:{...d.officials,[id]:list}}))} canEdit={canEdit} saving={cloud.saving} onChange={(id,players)=>setData(d=>({...d,rosters:{...d.rosters,[id]:players}}))}/> : <p>Loading teams…</p>}
         </>}
         {canEdit && (tab === 'draw' || tab === 'teams') && (
           <>
