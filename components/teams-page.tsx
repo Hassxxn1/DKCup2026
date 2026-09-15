@@ -4,9 +4,10 @@ import {initialRoster,initialOfficials,type Officials,type TeamOfficial,type Pla
 import {teamCompany} from '@/lib/team-company';
 import {Logo} from './draw-panel';
 import TeamName from './team-name';
+import SquadExport from './squad-export';
 import {loadPlayerPhoto} from '@/lib/player-photo';
 
-export default function TeamsPage({registration,rosters,officials,onOfficials,canEdit,saving,onChange}:{registration:Registration;rosters:Rosters;officials:Officials;onOfficials:(id:string,list:TeamOfficial[])=>void;canEdit:boolean;saving:boolean;onChange:(id:string,players:Player[])=>void}) {
+export default function TeamsPage({title,registration,rosters,officials,onOfficials,canEdit,saving,onChange}:{title:string;registration:Registration;rosters:Rosters;officials:Officials;onOfficials:(id:string,list:TeamOfficial[])=>void;canEdit:boolean;saving:boolean;onChange:(id:string,players:Player[])=>void}) {
   const [selected,setSelected]=useState<string|null>(null);
   const [editing,setEditing]=useState(false);
   const [uploading,setUploading]=useState<number|null>(null);
@@ -55,6 +56,7 @@ export default function TeamsPage({registration,rosters,officials,onOfficials,ca
       <button className="roster-back" disabled={busy} onClick={()=>{setSelected(null);setEditing(false);}}>← All teams</button>
       <header className="roster-header"><Logo team={team}/><div><p className="kicker">{registration.men.some(t=>t.id===team.id)?'MEN’S TEAM':'WOMEN’S TEAM'}</p><h2 ref={heading} tabIndex={-1}><TeamName name={team.name}/></h2></div>
       {canEdit && <button className="roster-edit" disabled={busy} onClick={()=>setEditing(!editing)}>{editing?'View roster':'Edit roster'}</button>}</header>
+      {canEdit && <SquadExport team={team} players={players} officials={staff} division={registration.men.some(t=>t.id===team.id)?"Men":"Women"} title={title} disabled={busy}/>}
       {photoError && <p role="alert" className="photo-error">{photoError}</p>}
       {uploading!==null && <p role="status">Preparing photo… Please wait before saving.</p>}
       {(staff.some(o=>o.name.trim()) || canEdit) && <section className="team-officials"><h3>Team officials</h3><div className="officials-grid">

@@ -528,7 +528,7 @@ export default function Home() {
         )}
         {tab === 'rosters' && <>
           <Head k="DHONKALEYFAANU CUP 2026" t="Teams"/>
-          {ready ? <TeamsPage registration={data.registration} rosters={data.rosters || {}} officials={data.officials || {}} onOfficials={(id,list)=>setData(d=>({...d,officials:{...d.officials,[id]:list}}))} canEdit={canEdit} saving={cloud.saving} onChange={(id,players)=>setData(d=>({...d,rosters:{...d.rosters,[id]:players}}))}/> : <p>Loading teams…</p>}
+          {ready ? <TeamsPage title={data.title} registration={data.registration} rosters={data.rosters || {}} officials={data.officials || {}} onOfficials={(id,list)=>setData(d=>({...d,officials:{...d.officials,[id]:list}}))} canEdit={canEdit} saving={cloud.saving} onChange={(id,players)=>setData(d=>({...d,rosters:{...d.rosters,[id]:players}}))}/> : <p>Loading teams…</p>}
         </>}
         {canEdit && (tab === 'draw' || tab === 'teams') && (
           <>
