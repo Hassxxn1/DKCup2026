@@ -46,7 +46,7 @@ export async function renderSquad(team:Entry,players:Player[],officials:TeamOffi
     const columns=page.people.length>28?5:4;
     const gap=16,cardWidth=(1080-gap*(columns-1))/columns;
     const rows=page.sections.reduce((sum,g)=>sum+Math.ceil(g.people.length/columns),0);
-    const cardHeight=Math.min(204,(1135-page.sections.length*46-rows*gap)/rows);
+    const cardHeight=Math.min(240,(1135-page.sections.length*46-rows*gap)/rows);
     let top=275;
     page.sections.forEach(section=>{
       text(section.title,60,top+24,1000,23,'#8edfff');
@@ -54,14 +54,14 @@ export async function renderSquad(team:Entry,players:Player[],officials:TeamOffi
       section.people.forEach((person,i)=>{
         const x=60+(i%columns)*(cardWidth+gap),y=top+Math.floor(i/columns)*(cardHeight+gap);
         c.fillStyle='#171e24';c.fillRect(x,y,cardWidth,cardHeight);
-        const photoSize=Math.max(32,Math.min(106,cardHeight-78));
+        const photoSize=Math.max(32,Math.min(cardWidth-20,cardHeight-66));
         const photoX=x+(cardWidth-photoSize)/2,photoY=y+10;
         const img=person.photo?images.get(person.photo):undefined;
         if(img)c.drawImage(img,photoX,photoY,photoSize,photoSize);
         else {c.fillStyle='#26353f';c.fillRect(photoX,photoY,photoSize,photoSize);text(person.name.split(/\s+/).map(n=>n[0]).slice(0,2).join(''),photoX+photoSize*.2,photoY+photoSize*.65,photoSize*.65,Math.min(32,photoSize*.4),'#a9bac6');}
         if(person.number!==undefined){c.fillStyle='#00afe3';c.fillRect(x+8,y+10,42,30);text(person.number||'–',x+14,y+32,30,21,'#071016');}
-        text(person.name,x+10,y+cardHeight-39,cardWidth-20,20);
-        text(person.detail,x+10,y+cardHeight-14,cardWidth-20,16,'#b5bec5',400);
+        text(person.name,x+10,y+cardHeight-32,cardWidth-20,20);
+        text(person.detail,x+10,y+cardHeight-10,cardWidth-20,16,'#b5bec5',400);
       });
       top+=Math.ceil(section.people.length/columns)*(cardHeight+gap);
     });
