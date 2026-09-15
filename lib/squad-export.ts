@@ -8,7 +8,8 @@ export function squadPages(players:Player[],officials:TeamOfficial[]) {
     {title:'PLAYERS',people:players.filter(p=>p.name.trim()).map(p=>({name:p.name,detail:p.company,photo:p.photo,number:p.number}))},
     {title:'TEAM OFFICIALS',people:officials.filter(o=>o.name.trim()).map(o=>({name:o.name,detail:o.role,photo:o.photo}))},
   ];
-  return groups.flatMap(g=>Array.from({length:Math.ceil(g.people.length/12)},(_,i)=>({title:g.title,people:g.people.slice(i*12,i*12+12)})));
+  const sections=groups.filter(g=>g.people.length);
+  return sections.length ? [{sections,people:sections.flatMap(g=>g.people)}] : [];
 }
 async function load(src:string) {
   const img=new Image();img.crossOrigin='anonymous';
@@ -42,16 +43,27 @@ export async function renderSquad(team:Entry,players:Player[],officials:TeamOffi
     const left=team.logo?195:60;
     text(team.name.toUpperCase(),left,187,940-left,48);
     text(teamCompany(team.name),left,226,940-left,24,'#b5bec5',400);
-    text(page.title,60,295,1000,24,'#8edfff');
-    page.people.forEach((person,i)=>{
-      const x=60+(i%3)*368,y=325+Math.floor(i/3)*270;
-      c.fillStyle='#171e24';c.fillRect(x,y,344,250);
-      const img=person.photo?images.get(person.photo):undefined;
-      if(img)c.drawImage(img,x+104,y+15,136,136);
-      else {c.fillStyle='#26353f';c.fillRect(x+104,y+15,136,136);text(person.name.split(/\s+/).map(n=>n[0]).slice(0,2).join(''),x+132,y+96,90,38,'#a9bac6');}
-      if(person.number!==undefined){c.fillStyle='#00afe3';c.fillRect(x+14,y+15,64,40);text(person.number||'–',x+24,y+44,44,26,'#071016');}
-      text(person.name,x+14,y+190,316,23);
-      text(person.detail,x+14,y+224,316,18,'#b5bec5',400);
+    const columns=page.people.length>28?5:4;
+    const gap=16,cardWidth=(1080-gap*(columns-1))/columns;
+    const rows=page.sections.reduce((sum,g)=>sum+Math.ceil(g.people.length/columns),0);
+    const cardHeight=Math.min(204,(1135-page.sections.length*46-rows*gap)/rows);
+    let top=275;
+    page.sections.forEach(section=>{
+      text(section.title,60,top+24,1000,23,'#8edfff');
+      top+=46;
+      section.people.forEach((person,i)=>{
+        const x=60+(i%columns)*(cardWidth+gap),y=top+Math.floor(i/columns)*(cardHeight+gap);
+        c.fillStyle='#171e24';c.fillRect(x,y,cardWidth,cardHeight);
+        const photoSize=Math.max(32,Math.min(106,cardHeight-78));
+        const photoX=x+(cardWidth-photoSize)/2,photoY=y+10;
+        const img=person.photo?images.get(person.photo):undefined;
+        if(img)c.drawImage(img,photoX,photoY,photoSize,photoSize);
+        else {c.fillStyle='#26353f';c.fillRect(photoX,photoY,photoSize,photoSize);text(person.name.split(/\s+/).map(n=>n[0]).slice(0,2).join(''),photoX+photoSize*.2,photoY+photoSize*.65,photoSize*.65,Math.min(32,photoSize*.4),'#a9bac6');}
+        if(person.number!==undefined){c.fillStyle='#00afe3';c.fillRect(x+8,y+10,42,30);text(person.number||'–',x+14,y+32,30,21,'#071016');}
+        text(person.name,x+10,y+cardHeight-39,cardWidth-20,20);
+        text(person.detail,x+10,y+cardHeight-14,cardWidth-20,16,'#b5bec5',400);
+      });
+      top+=Math.ceil(section.people.length/columns)*(cardHeight+gap);
     });
     c.fillStyle='#34404a';c.fillRect(60,1440,1080,1);
     text('OUR SPONSORS',60,1474,800,15,'#b5bec5');
