@@ -30,12 +30,14 @@ export async function renderMatchResult(match:ResultMatch,teams:Entry[]){
   c.fillStyle='#080d12';c.fillRect(0,0,1080,1350);
   const text=(value:string,x:number,y:number,width:number,size:number,color='#fff')=>{c.font=`700 ${size}px Arial`;while(c.measureText(value).width>width&&size>13){size--;c.font=`700 ${size}px Arial`;}c.fillStyle=color;c.textAlign='center';c.fillText(value,x,y,width);};
   const contain=(src:string|undefined,x:number,y:number,w:number,h:number)=>{const img=src?images.get(src):undefined;if(!img)return;const scale=Math.min(w/img.width,h/img.height);c.drawImage(img,x+(w-img.width*scale)/2,y+(h-img.height*scale)/2,img.width*scale,img.height*scale);};
-  contain('/adk-synergy-white.png',960,28,75,88);
   if(match.photo){
-    const img=images.get(match.photo)!;const scale=Math.max(1080/img.width,760/img.height);
-    c.save();c.beginPath();c.rect(0,140,1080,760);c.clip();c.drawImage(img,(1080-img.width*scale)/2,140+(760-img.height*scale)/2,img.width*scale,img.height*scale);c.restore();
-    const fade=c.createLinearGradient(0,720,0,915);fade.addColorStop(0,'#080d1200');fade.addColorStop(1,'#080d12');c.fillStyle=fade;c.fillRect(0,720,1080,195);
+    const img=images.get(match.photo)!;
+    const scale=Math.max(canvas.width/img.width,canvas.height/img.height);
+    c.drawImage(img,(canvas.width-img.width*scale)/2,(canvas.height-img.height*scale)/2,img.width*scale,img.height*scale);
   }
+  // A small shadow keeps the overlaid marks legible without darkening the photo.
+  c.shadowColor='rgba(0,0,0,0.75)';c.shadowBlur=7;c.shadowOffsetY=2;
+  contain('/adk-synergy-white.png',960,28,75,88);
   const logoY=1055;
   const badge=(entry:Entry|undefined,name:string,x:number)=>{if(entry?.logo)contain(entry.logo,x-95,logoY,190,190);else{c.fillStyle='#1d303e';c.fillRect(x-95,logoY,190,190);text(name.split(/\s+/).map(n=>n[0]).slice(0,3).join(''),x,logoY+115,165,48,'#8edfff');}};
   badge(home,match.home,200);badge(away,match.away,880);
