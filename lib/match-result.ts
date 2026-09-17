@@ -36,7 +36,7 @@ export async function renderMatchResult(match:ResultMatch,teams:Entry[]){
     c.save();c.beginPath();c.rect(0,140,1080,760);c.clip();c.drawImage(img,(1080-img.width*scale)/2,140+(760-img.height*scale)/2,img.width*scale,img.height*scale);c.restore();
     const fade=c.createLinearGradient(0,720,0,915);fade.addColorStop(0,'#080d1200');fade.addColorStop(1,'#080d12');c.fillStyle=fade;c.fillRect(0,720,1080,195);
   }
-  const logoY=match.photo?950:515;
+  const logoY=1055;
   const badge=(entry:Entry|undefined,name:string,x:number)=>{if(entry?.logo)contain(entry.logo,x-95,logoY,190,190);else{c.fillStyle='#1d303e';c.fillRect(x-95,logoY,190,190);text(name.split(/\s+/).map(n=>n[0]).slice(0,3).join(''),x,logoY+115,165,48,'#8edfff');}};
   badge(home,match.home,200);badge(away,match.away,880);
   text(`${match.hs} – ${match.as}`,540,logoY+135,430,116);
