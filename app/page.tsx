@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import DrawPanel, { Logo } from '@/components/draw-panel';
 import ScheduleExport from '@/components/schedule-export';
+import MatchResultExport from '@/components/match-result-export';
+import {validateMatchPhoto} from '@/lib/match-result';
 import {
   register,
   readRegistration,
@@ -45,6 +47,7 @@ type Match = {
   stage: 'Group' | 'Semifinal' | 'Final';
   hs: string;
   as: string;
+  photo?: string;
 };
 type Data = {
   title: string;
@@ -272,6 +275,7 @@ function normalize(value: unknown): Data {
   const matches = timing.map((template) => {
     const old = d.matches.find((m) => m.id === template.id);
     if (!old) throw new Error('Missing fixture.');
+    validateMatchPhoto(old.photo);
     return {
       ...old,
       day: template.day,
@@ -655,6 +659,7 @@ export default function Home() {
                             ]
                           }
                         />
+                        {canEdit && <MatchResultExport match={m} teams={data.registration[m.division.includes('Women')?'women':'men']} title={data.title} date={date(m.day===1?data.date1:data.date2)} venue={data.venue} saving={cloud.saving} onPhoto={photo=>setData(d=>({...d,matches:d.matches.map(item=>item.id===m.id?{...item,photo}:item)}))}/>}
                       </article>
                     ))}
                     </div>
