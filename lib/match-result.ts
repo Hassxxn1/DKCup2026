@@ -1,4 +1,5 @@
 import type {Entry} from './draw';
+import {transparentLogo} from './logo-background';
 export type ResultMatch={id:number;home:string;away:string;hs:string;as:string;division:string;time:string;ground:number;photo?:string};
 export const hasResult=(match:ResultMatch)=>/^\d{1,2}$/.test(match.hs)&&/^\d{1,2}$/.test(match.as);
 export function validateMatchPhoto(photo:unknown){
@@ -24,7 +25,10 @@ export async function renderMatchResult(match:ResultMatch,teams:Entry[]){
   if(!hasResult(match))throw new Error('Enter both final scores before exporting.');
   const home=teams.find(t=>t.name===match.home),away=teams.find(t=>t.name===match.away);
   const sources=[...new Set(['/adk-synergy-white.png',home?.logo,away?.logo,match.photo].filter((s):s is string=>Boolean(s)))];
-  const images=new Map(await Promise.all(sources.map(async src=>[src,await image(src)] as const)));
+  const images=new Map<string,HTMLImageElement|HTMLCanvasElement>(await Promise.all(sources.map(async src=>{
+    const img=await image(src);
+    return [src,(src===home?.logo || src===away?.logo) && src!==match.photo ? transparentLogo(img) : img] as const;
+  })));
   const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;
   const c=canvas.getContext('2d');if(!c)throw new Error('Image export is unavailable.');
   c.fillStyle='#080d12';c.fillRect(0,0,1080,1350);
