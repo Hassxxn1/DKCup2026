@@ -14,3 +14,12 @@ it('qualifies ranked teams only after a confirmed complete group',()=>{
 it('does not choose a qualifier by registration order when ranking is tied',()=>{
  expect(qualifiedTeam(games,'Men A',true,[ranks[0],{...ranks[0],team:'B'}],0)).toBeUndefined();
 });
+
+import {knockoutWinner} from './qualification';
+it('resolves semifinal winners only with known teams and decisive scores',()=>{
+ expect(knockoutWinner({hs:'3',as:'0'},['A','B'])).toBe('A');
+ expect(knockoutWinner({hs:'0',as:'1'},['A','B'])).toBe('B');
+ expect(knockoutWinner({hs:'',as:'1'},['A','B'])).toBeUndefined();
+ expect(knockoutWinner({hs:'2',as:'2'},['A','B'])).toBeUndefined();
+ expect(knockoutWinner({hs:'3',as:'0'},[undefined,'B'])).toBeUndefined();
+});

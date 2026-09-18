@@ -7,3 +7,8 @@ export function qualifiedTeam(matches:Result[], division:string, confirmed:boole
   if(!team || ranks.some((other,i)=>i!==position && other.pts===team.pts && other.gd===team.gd && other.gf===team.gf)) return undefined;
   return team.team;
 }
+
+export function knockoutWinner(result:{hs:string;as:string}|undefined,teams:[string|undefined,string|undefined]) {
+  if(!result || !teams[0] || !teams[1] || !/^\d+$/.test(result.hs) || !/^\d+$/.test(result.as) || Number(result.hs)===Number(result.as)) return undefined;
+  return Number(result.hs)>Number(result.as)?teams[0]:teams[1];
+}

@@ -7,7 +7,7 @@ import TeamName from '@/components/team-name';
 import TeamsPage from '@/components/teams-page';
 import { initialRoster, readRosters, initialOfficials, readOfficials, type Officials, type Rosters } from '@/lib/rosters';
 import { teamCompany } from '@/lib/team-company';
-import { qualifiedTeam } from '@/lib/qualification';
+import { qualifiedTeam, knockoutWinner } from '@/lib/qualification';
 import {
   CalendarDays,
   Clipboard,
@@ -443,6 +443,7 @@ export default function Home() {
     20:[qualifiedTeam(data.matches,'Men B',data.confirmed.men,st.b,0),qualifiedTeam(data.matches,'Men A',data.confirmed.men,st.a,1)],
     22:[qualifiedTeam(data.matches,'Women',data.confirmed.women,st.w,0),qualifiedTeam(data.matches,'Women',data.confirmed.women,st.w,1)],
   };
+  knockoutTeams[21]=[knockoutWinner(data.matches.find(m=>m.id===19),knockoutTeams[19]),knockoutWinner(data.matches.find(m=>m.id===20),knockoutTeams[20])];
   const visibleMatches = ready ? data.matches
     .filter(m=>data.confirmed[m.division.includes('Women')?'women':'men'])
     .map(m=>knockoutTeams[m.id] ? {...m,home:knockoutTeams[m.id][0] ?? games(data.men,data.women).find(x=>x.id===m.id)!.home,away:knockoutTeams[m.id][1] ?? games(data.men,data.women).find(x=>x.id===m.id)!.away} : m) : [];
@@ -720,8 +721,8 @@ export default function Home() {
               />
               <Final
                 label="MEN’S FINAL"
-                a="Semifinal 1 winner"
-                b="Semifinal 2 winner"
+                a={knockoutTeams[21][0] ?? "Semifinal 1 winner"}
+                b={knockoutTeams[21][1] ?? "Semifinal 2 winner"}
                 time="20:45 · Ground 1"
                 final
               />
