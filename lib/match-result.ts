@@ -27,7 +27,8 @@ export async function renderMatchResult(match:ResultMatch,teams:Entry[]){
   const sources=[...new Set(['/adk-synergy-white.png',home?.logo,away?.logo,match.photo].filter((s):s is string=>Boolean(s)))];
   const images=new Map<string,HTMLImageElement|HTMLCanvasElement>(await Promise.all(sources.map(async src=>{
     const img=await image(src);
-    return [src,(src===home?.logo || src===away?.logo) && src!==match.photo ? transparentLogo(img) : img] as const;
+    const keepOriginal=[home,away].some(team=>team?.logo===src && /^(twcworriors|twcwarriors|twcstrikers|oaga)$/.test(team.name.toLowerCase().replace(/[^a-z0-9]/g,'')));
+    return [src,!keepOriginal && (src===home?.logo || src===away?.logo) && src!==match.photo ? transparentLogo(img) : img] as const;
   })));
   const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;
   const c=canvas.getContext('2d');if(!c)throw new Error('Image export is unavailable.');
