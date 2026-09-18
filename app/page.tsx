@@ -347,7 +347,6 @@ export default function Home() {
         })),
       };
     });
-  const visibleMatches = ready ? data.matches.filter(m=>data.confirmed[m.division.includes('Women')?'women':'men']) : [];
   const clearDraw = () => {
     if(!confirm('Clear both draws, fixtures and scores? Registered teams and logos will be kept. Export a backup first if you need these results.')) return;
     setData(d=>({...d,confirmed:{men:false,women:false},registration:{men:d.registration.men.map(t=>({...t,number:null})),women:d.registration.women.map(t=>({...t,number:null}))},matches:games(d.men,d.women)}));
@@ -439,6 +438,14 @@ export default function Home() {
     }),
     [data],
   );
+  const knockoutTeams:Record<number,[string|undefined,string|undefined]> = {
+    19:[qualifiedTeam(data.matches,'Men A',data.confirmed.men,st.a,0),qualifiedTeam(data.matches,'Men B',data.confirmed.men,st.b,1)],
+    20:[qualifiedTeam(data.matches,'Men B',data.confirmed.men,st.b,0),qualifiedTeam(data.matches,'Men A',data.confirmed.men,st.a,1)],
+    22:[qualifiedTeam(data.matches,'Women',data.confirmed.women,st.w,0),qualifiedTeam(data.matches,'Women',data.confirmed.women,st.w,1)],
+  };
+  const visibleMatches = ready ? data.matches
+    .filter(m=>data.confirmed[m.division.includes('Women')?'women':'men'])
+    .map(m=>knockoutTeams[m.id] ? {...m,home:knockoutTeams[m.id][0] ?? games(data.men,data.women).find(x=>x.id===m.id)!.home,away:knockoutTeams[m.id][1] ?? games(data.men,data.women).find(x=>x.id===m.id)!.away} : m) : [];
   const score = (id: number, k: 'hs' | 'as', v: string) =>
     setData((d) => ({
       ...d,
@@ -701,14 +708,14 @@ export default function Home() {
             <div className="bracket">
               <Final
                 label="SEMIFINAL 1"
-                a={qualifiedTeam(data.matches, 'Men A', data.confirmed.men, st.a, 0)}
-                b={qualifiedTeam(data.matches, 'Men B', data.confirmed.men, st.b, 1)}
+                a={knockoutTeams[19][0]}
+                b={knockoutTeams[19][1]}
                 time="17:30 · Ground 1"
               />
               <Final
                 label="SEMIFINAL 2"
-                a={qualifiedTeam(data.matches, 'Men B', data.confirmed.men, st.b, 0)}
-                b={qualifiedTeam(data.matches, 'Men A', data.confirmed.men, st.a, 1)}
+                a={knockoutTeams[20][0]}
+                b={knockoutTeams[20][1]}
                 time="17:30 · Ground 2"
               />
               <Final
@@ -720,8 +727,8 @@ export default function Home() {
               />
               <Final
                 label="WOMEN’S FINAL"
-                a={qualifiedTeam(data.matches, 'Women', data.confirmed.women, st.w, 0)}
-                b={qualifiedTeam(data.matches, 'Women', data.confirmed.women, st.w, 1)}
+                a={knockoutTeams[22][0]}
+                b={knockoutTeams[22][1]}
                 time="20:00 · Ground 1"
                 women
               />
