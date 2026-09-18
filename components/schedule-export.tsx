@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import type { Registration } from '@/lib/draw';
 
 type Fixture = {
+  stage?: string;
   day: number;
   time: string;
   ground: number;
@@ -31,7 +32,7 @@ async function decode(src: string) {
   await img.decode();
   return img;
 }
-export async function renderSchedule(data: Schedule): Promise<Poster[]> {
+export async function renderSchedule(data: Schedule, scope: 'all'|'Semifinal'|'Final' = 'all'): Promise<Poster[]> {
   const sources = [
     ...new Set(
       [
@@ -50,7 +51,7 @@ export async function renderSchedule(data: Schedule): Promise<Poster[]> {
   const posters: Poster[] = [];
   for (const day of [1, 2]) {
     const matches = data.matches
-      .filter((m) => m.day === day)
+      .filter((m) => m.day === day && (scope==='all' || m.stage===scope))
       .sort((a, b) => a.time.localeCompare(b.time) || a.ground - b.ground);
     const total = Math.ceil(matches.length / 8);
     for (let page = 0; page < total; page++) {
@@ -109,7 +110,7 @@ export async function renderSchedule(data: Schedule): Promise<Poster[]> {
         c.fillStyle = color;
         c.fillRect(i * 270, 0, 270, 12);
       });
-      text('MATCH SCHEDULE', 48, 62, 18, '#00afef', 730);
+      text(scope==='all'?'MATCH SCHEDULE':scope==='Semifinal'?'SEMIFINALS':'FINALS', 48, 62, 18, '#00afef', 730);
       text(data.title, 48, 112, 42, '#ffffff', 730);
       text(data.venue, 48, 149, 22, '#bdbfc1', 730);
       logo(ADK_WHITE_LOGO, 862, 18, 170, 150, false);
@@ -174,7 +175,7 @@ export async function renderSchedule(data: Schedule): Promise<Poster[]> {
       c.drawImage(sponsors, (1080 - sponsorWidth) / 2, 1160 + (180 - sponsorHeight) / 2, sponsorWidth, sponsorHeight);
       posters.push({
         url: canvas.toDataURL('image/png'),
-        name: `tournament-day-${day}-${date}-part-${page + 1}.png`,
+        name: `tournament-${scope.toLowerCase()}-day-${day}-${date}-part-${page + 1}.png`,
         label: `${dateLabel} · ${page + 1} of ${total}`,
       });
     }
@@ -191,13 +192,14 @@ export default function ScheduleExport({
     [error, setError] = useState(''),
     [posters, setPosters] = useState<Poster[]>([]),
     [snapshot, setSnapshot] = useState('');
-  const current = JSON.stringify(data);
+  const [scope,setScope]=useState<'all'|'Semifinal'|'Final'>('all');
+  const current = JSON.stringify({data,scope});
   const stale = snapshot !== current;
   const generate = async () => {
     setBusy(true);
     setError('');
     try {
-      setPosters(await renderSchedule(data));
+      setPosters(await renderSchedule(data,scope));
       setSnapshot(current);
     } catch {
       setError(
@@ -209,17 +211,19 @@ export default function ScheduleExport({
   };
   return (
     <div className="schedule-export">
-      <Button className="action" onClick={() => setOpen(!open)}>
+      <Button className="action" onClick={() => {setScope('all');setOpen(!open || scope!=='all');}}>
         <ImageDown />
         Export PNG
       </Button>
+      <Button className="action" disabled={!data.matches.some(m=>m.stage==='Semifinal')} onClick={()=>{setScope('Semifinal');setOpen(true);}}>Share semifinals</Button>
+      <Button className="action" disabled={!data.matches.some(m=>m.stage==='Final')} onClick={()=>{setScope('Final');setOpen(true);}}>Share finals</Button>
       {open && (
         <section
           className="png-panel"
           aria-label="Social media schedule export"
         >
           <div>
-            <h3>Share the schedule</h3>
+            <h3>{scope==='all'?'Share the schedule':scope==='Semifinal'?'Share semifinals':'Share finals'}</h3>
             <p>1080 × 1350 PNG posters, with team logos, sponsors and no scores.</p>
           </div>
           <div className="png-brand">
